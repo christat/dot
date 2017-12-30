@@ -1,0 +1,32 @@
+// Example of a simple graph
+// July, 2016
+
+graph prueba {
+
+      // The graph specified is:
+      //
+      //     A---t
+      //     |\ /|
+      //     | B |
+      //     |/ \|
+      //     s---C
+      //
+      // Since it is an undirected graph, adjacencies shall be
+      // specified only once
+      
+      s -- {                // multiple specification
+      	A
+	    B
+	    C
+      };
+      A -- {
+      	B
+	    t
+      };
+      B -- t;               // single specification
+      C -- {
+      	B
+	    t
+      };
+}
+

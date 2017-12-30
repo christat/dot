@@ -1,0 +1,32 @@
+// Example of a simple graph
+// July, 2016
+
+graph prueba {
+
+      // The graph specified is:
+      //
+      //     A---t
+      //     |\ /|
+      //     | B |
+      //     |/ \|
+      //     s---C
+      //
+      // Since it is an undirected graph, adjacencies shall be
+      // specified only once
+      
+      s [h_cff=2.0, h_pdb=2, name="Start"] -- [k=1] {
+      	A
+	B
+	C
+      };
+      A [ h_cff = 10.10 ] -- [k=1] {
+      	B [ name = "(0,0)", h_cff = 1, h_pdb = 1.41 ]
+	t
+      };
+      B -- [k=1, name="Optimal"] t [ h_cff = 0, h_pdb = 0, name = "Goal" ];
+      C [ h_cff = 3.14159, h_ff = 1.0, h_pdb = 10.0 ] -- [k=1] {
+      	B
+	t
+      };
+}
+
