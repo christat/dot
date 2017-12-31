@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/christat/dot/src"
+	"github.com/christat/dot/parser"
 )
 
 const (

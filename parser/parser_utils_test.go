@@ -91,11 +91,10 @@ func TestParseVertexName(t *testing.T) {
 
 func TestParseAttributes(t *testing.T) {
 	fileStream := []byte("[\tfoo = 0.12, bar=26, foobar =12.26, quote\t=\"sth\", bool\n=true, string=\ttest ]")
-	match, _, attributes := parseAttributes(fileStream)
+	match, _, attr := parseAttributes(fileStream)
 	if !match {
 		t.Error("parseAttributes() failed to match a correct attributes section")
 	}
-	attr := *attributes
 	foo := attr["foo"] == 0.12
 	bar := attr["bar"] == 26
 	foobar := attr["foobar"] == 12.26

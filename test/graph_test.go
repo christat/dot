@@ -1,7 +1,7 @@
 package dot_test
 
 import (
-	"github.com/christat/dot/src"
+	"github.com/christat/dot/parser"
 	"testing"
 )
 
