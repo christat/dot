@@ -9,7 +9,7 @@ func generateGraph() (*dot.Graph) {
 	g := dot.NewGraph()
 	g.Name = "example"
 	g.Type = "digraph"
-	g.AdjacencyMap = map[string][]string{
+	g.AdjacencyMap = map[string][]interface{}{
 		"s": {"A", "C"},
 		"A": {"s", "t"},
 		"C": {"s", "t"},

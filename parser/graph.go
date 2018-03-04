@@ -1,14 +1,19 @@
 package dot
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // Graph contains the topology and attributes of a Graph, including name, type, and adjacency map and vertex/edge attributes.
+// Additionally, it implements the Domain interface defined in github.com/christat/search. This means we can use this
+// type to perform search with the algorithms provided in the aforementioned library.
 type Graph struct {
 	Name string
 	Type string
 
 	// AdjacencyMap stores the adjacent vertices of each vertex. Each entry of the map consists of a list of vertices.
-	AdjacencyMap map[string][]string
+	AdjacencyMap map[string][]interface{}
 
 	// VertexAttributes stores for every vertex a map of attributes in the form "name": "value".
 	VertexAttributes map[string]map[string]interface{}
@@ -16,12 +21,62 @@ type Graph struct {
 	// EdgeAttributes stores, in a map for every vertex name, another map whose key is the target vertex name and
 	// the value is a third map of attributes in the form "name": "value".
 	EdgeAttributes map[string]map[string]map[string]interface{}
+
+	costKeys []string // key(s) to the cost value(s) in any vertex of the graph.
+	heuristicKey string // key to the heuristic value in any vertex of the graph.
+}
+
+/*
+	The following three functions implement the search.Domain interface.
+ */
+
+func (g * Graph) Neighbors(node interface{}) (neighbors []interface{}, err error){
+	vertex, ok := node.(string)
+	if !ok {
+		return nil, fmt.Errorf("cannot use non-string property accesors in Graph type")
+	}
+	return g.AdjacencyMap[vertex], nil
+}
+
+func (g *Graph) G(node interface{}) (cost float64, err error) {
+	vertex, ok := node.(string)
+	if !ok {
+		return 0, fmt.Errorf("cannot use non-string property accesors in Graph type")
+	}
+	for _, key := range g.costKeys {
+		value, err := g.GetVertexAttribute(vertex, key)
+		if err != nil {
+			return 0, err
+		}
+		f, err := strconv.ParseFloat(value.(string), 64)
+		if err != nil {
+			return 0, err
+		}
+		cost += float64(f)
+	}
+	return
+}
+
+func (g *Graph) H(node interface{}) (heuristic float64, err error){
+	vertex, ok := node.(string)
+	if !ok {
+		return 0, fmt.Errorf("cannot use non-string property accesors in Graph type")
+	}
+	value, err := g.GetVertexAttribute(vertex, g.heuristicKey)
+	if err != nil {
+		return 0, err
+	}
+	heuristic, err = strconv.ParseFloat(value.(string), 64)
+	if err != nil {
+		return 0, err
+	}
+	return
 }
 
 // NewGraph creates and returns a pointer to a new Graph
 func NewGraph() (g *Graph) {
 	g = new(Graph)
-	g.AdjacencyMap = make(map[string][]string)
+	g.AdjacencyMap = make(map[string][]interface{})
 	g.VertexAttributes = make(map[string]map[string]interface{})
 	g.EdgeAttributes = make(map[string]map[string]map[string]interface{})
 	return g
