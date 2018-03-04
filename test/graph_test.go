@@ -1,8 +1,9 @@
 package dot_test
 
 import (
-	"github.com/christat/dot/parser"
 	"testing"
+
+	"github.com/christat/dot/graph"
 )
 
 func generateGraph() (*dot.Graph) {

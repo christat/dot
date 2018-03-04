@@ -3,6 +3,8 @@ package dot
 import (
 	"testing"
 	"bytes"
+
+	"github.com/christat/dot/graph"
 )
 
 // This file unit tests all the components of the .dot parser.
@@ -30,7 +32,7 @@ func TestStripAllComments(t *testing.T) {
 }
 
 func TestParseGraphType(t *testing.T) {
-	g := NewGraph()
+	g := dot.NewGraph()
 	fileStream := []byte("DiGrAph test {...") //tests ignore case flag in regexp
 	match, fileStream := parseGraphType(g, fileStream)
 	if !match {
@@ -44,7 +46,7 @@ func TestParseGraphType(t *testing.T) {
 }
 
 func TestParseGraphName(t *testing.T){
-	g := NewGraph()
+	g := dot.NewGraph()
 	fileStream := []byte("9name123 {...")
 	match, fileStream := parseGraphName(g, fileStream)
 	if !match {
@@ -149,7 +151,7 @@ func TestCastAttributeValue(t *testing.T) {
 }
 
 func TestParseVertexAttributes(t *testing.T) {
-	g := NewGraph()
+	g := dot.NewGraph()
 	fileStream := []byte("[ a=3.1496, b= false, c =	foo ]")
 	match, _ := parseVertexAttributes(fileStream, g, "origin")
 	if !match {
@@ -184,7 +186,7 @@ func TestParseEdgeType(t *testing.T) {
 }
 
 func TestParseTargetVertexName(t *testing.T) {
-	g := NewGraph()
+	g := dot.NewGraph()
 	fileStream := []byte("target;")
 	match, _, targetName := parseTargetVertexName(fileStream, g, "origin", true)
 	if !match {

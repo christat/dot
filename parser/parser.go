@@ -4,14 +4,16 @@ package dot
 import (
 	"fmt"
 	"os"
+
+	"github.com/christat/dot/graph"
 )
 
 var verbose = false
 
 // Parse parses the fileStream, building a Graph instance or returning false otherwise.
-func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
+func Parse(fileStream []byte, verboseFlag bool) (bool, *dot.Graph) {
 	verbose = verboseFlag
-	g := NewGraph()
+	g := dot.NewGraph()
 
 	fileStream = stripAllComments(fileStream)
 	match, fileStream := parseGraphType(g, fileStream)
@@ -103,7 +105,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 
 // ParseFile wraps the Parse() function with a file reader to get a fileStream ([]byte) if the file exists.
 // Returns a pointer to a Graph instance or false if reading the file or parsing failed.
-func ParseFile(filePath string, verbose bool) (bool, *Graph) {
+func ParseFile(filePath string, verbose bool) (bool, *dot.Graph) {
 	ok, fileStream := readFile(filePath)
 	if !ok {
 		fmt.Fprintf(os.Stderr, "Failed to read file %v. Parsing aborted.", filePath)
