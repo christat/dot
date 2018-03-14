@@ -69,12 +69,12 @@ func main() {
 				os.Exit(exitError)
 			}
 			for _, neighbor := range neighbors {
-				attributes, _ := g.GetEdgeAttributes(vertex, neighbor)
+				attributes, _ := g.GetEdgeAttributes(vertex, neighbor.(string))
 				if len(attributes) > 0 {
 					fmt.Printf(" Edge %v -> %v:\n", vertex, neighbor)
 					if len(attributes) > 0 {
 						for attribute := range attributes {
-							value, err := g.GetEdgeAttribute(vertex, neighbor, attribute)
+							value, err := g.GetEdgeAttribute(vertex, neighbor.(string), attribute)
 							if err != nil {
 								fmt.Fprintf(os.Stderr, "Failed to fetch edge attributes %v", attribute)
 								os.Exit(exitError)

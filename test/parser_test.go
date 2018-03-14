@@ -15,7 +15,7 @@ func TestParseFile(t *testing.T) {
 	const filePathTemplate = "./test_files/%v.dot"
 
 	for i := range make([]int, 5) {
-		filePath := strings.Replace(filePathTemplate, "%v", "graph" + strconv.Itoa(i+1), 1)
+		filePath := strings.Replace(filePathTemplate, "%v", "graph"+strconv.Itoa(i+1), 1)
 		filePath, _ = filepath.Abs(filePath)
 		ok, _ := dot.ParseFile(filePath, false)
 		if !ok {

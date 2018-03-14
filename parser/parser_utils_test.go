@@ -1,8 +1,8 @@
 package dot
 
 import (
-	"testing"
 	"bytes"
+	"testing"
 
 	"github.com/christat/dot/graph"
 )
@@ -45,7 +45,7 @@ func TestParseGraphType(t *testing.T) {
 	}
 }
 
-func TestParseGraphName(t *testing.T){
+func TestParseGraphName(t *testing.T) {
 	g := dot.NewGraph()
 	fileStream := []byte("9name123 {...")
 	match, fileStream := parseGraphName(g, fileStream)
@@ -85,7 +85,7 @@ func TestParseVertexName(t *testing.T) {
 		t.Error("parseVertexName() didn't match a correct vertex name")
 	}
 	fileStream = []byte("{ this bracket shouldn't be here")
-	match, fileStream, name  := parseVertexName(fileStream, true, false)
+	match, fileStream, name := parseVertexName(fileStream, true, false)
 	if match {
 		t.Errorf("parseVertexName() matched '%v' as a block begin bracket", string(name))
 	}

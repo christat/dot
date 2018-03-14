@@ -22,15 +22,15 @@ type Graph struct {
 	// the value is a third map of attributes in the form "name": "value".
 	EdgeAttributes map[string]map[string]map[string]interface{}
 
-	costKeys []string // key(s) to the cost value(s) in any vertex of the graph.
-	heuristicKey string // key to the heuristic value in any vertex of the graph.
+	costKeys     []string // key(s) to the cost value(s) in any vertex of the graph.
+	heuristicKey string   // key to the heuristic value in any vertex of the graph.
 }
 
 /*
 	The following three functions implement the search.Domain interface.
- */
+*/
 
-func (g * Graph) Neighbors(node interface{}) (neighbors []interface{}, err error){
+func (g *Graph) Neighbors(node interface{}) (neighbors []interface{}, err error) {
 	vertex, ok := node.(string)
 	if !ok {
 		return nil, fmt.Errorf("cannot use non-string property accesors in Graph type")
@@ -57,7 +57,7 @@ func (g *Graph) G(node interface{}) (cost float64, err error) {
 	return
 }
 
-func (g *Graph) H(node interface{}) (heuristic float64, err error){
+func (g *Graph) H(node interface{}) (heuristic float64, err error) {
 	vertex, ok := node.(string)
 	if !ok {
 		return 0, fmt.Errorf("cannot use non-string property accesors in Graph type")

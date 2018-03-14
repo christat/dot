@@ -6,7 +6,7 @@ import (
 	"github.com/christat/dot/graph"
 )
 
-func generateGraph() (*dot.Graph) {
+func generateGraph() *dot.Graph {
 	g := dot.NewGraph()
 	g.Name = "example"
 	g.Type = "digraph"
@@ -20,13 +20,13 @@ func generateGraph() (*dot.Graph) {
 		"s": {
 			"h_cff": 2,
 			"h_pdb": 2,
-			"name": "Start",
+			"name":  "Start",
 		},
 		"A": {
 			"h_cff": 10.1,
 		},
 		"C": {
-			"h_ff": 1,
+			"h_ff":  1,
 			"h_pdb": 10,
 			"h_cff": 3.14159,
 		},
