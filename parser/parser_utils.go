@@ -113,7 +113,6 @@ func parseAttributes(contents []byte) (match bool, src []byte, attributes map[st
 			if match {
 				// 1) value followed by end of section (']')
 				attributeString = strings.Trim(attributeString, " \"\\]\t\n")
-				//attributeString = castAttributeValue(attributeString)
 				printToken("\tVALUE " + attributeString)
 				attributeMap[attributeName] = castAttributeValue(attributeString)
 				attributesEnd = true

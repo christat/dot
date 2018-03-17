@@ -22,8 +22,11 @@ type Graph struct {
 	// the value is a third map of attributes in the form "name": "value".
 	EdgeAttributes map[string]map[string]map[string]interface{}
 
-	costKeys     []string // key(s) to the cost value(s) in any vertex of the graph.
-	heuristicKey string   // key to the heuristic value in any vertex of the graph.
+	CostFunc      func(origin, target interface{}) (cost float64, err error) // If set, called internally by G
+	HeuristicFunc func(node interface{}) (cost float64, err error) // If set, called internally by H
+
+	CostKey      string // If set (and no CostFunc func is set), assigns cost given by this key in node of G
+	HeuristicKey string // If set (and no HeuristicFunc func is set), assigns, heuristic given by this key in node of H
 }
 
 /*
@@ -31,46 +34,58 @@ type Graph struct {
 */
 
 func (g *Graph) Neighbors(node interface{}) (neighbors []interface{}, err error) {
-	vertex, ok := node.(string)
-	if !ok {
-		return nil, fmt.Errorf("cannot use non-string property accesors in Graph type")
-	}
-	return g.AdjacencyMap[vertex], nil
+	return g.AdjacencyMap[node.(string)], nil
 }
 
-func (g *Graph) G(node interface{}) (cost float64, err error) {
-	vertex, ok := node.(string)
-	if !ok {
-		return 0, fmt.Errorf("cannot use non-string property accesors in Graph type")
+func (g *Graph) G(origin, target interface{}) (cost float64, err error) {
+	// if function override
+	if g.CostFunc != nil {
+		return g.CostFunc(origin, target)
 	}
-	for _, key := range g.costKeys {
-		value, err := g.GetVertexAttribute(vertex, key)
+	// if cost key set
+	if g.CostKey != "" {
+		value, err := g.GetEdgeAttribute(origin.(string), target.(string), g.CostKey)
 		if err != nil {
 			return 0, err
 		}
-		f, err := strconv.ParseFloat(value.(string), 64)
-		if err != nil {
-			return 0, err
-		}
-		cost += float64(f)
+		return domainTypeSwitch(value)
 	}
-	return
+	// fallback unit cost
+	return 1, nil
 }
 
 func (g *Graph) H(node interface{}) (heuristic float64, err error) {
-	vertex, ok := node.(string)
-	if !ok {
-		return 0, fmt.Errorf("cannot use non-string property accesors in Graph type")
+	// if function override
+	if g.HeuristicFunc != nil {
+		return g.HeuristicFunc(node)
 	}
-	value, err := g.GetVertexAttribute(vertex, g.heuristicKey)
-	if err != nil {
-		return 0, err
+	// if heuristic key set
+	if g.HeuristicKey != "" {
+		value, err := g.GetVertexAttribute(node.(string), g.HeuristicKey)
+		if err != nil {
+			return 0, err
+		}
+		return domainTypeSwitch(value)
 	}
-	heuristic, err = strconv.ParseFloat(value.(string), 64)
-	if err != nil {
-		return 0, err
+	// fallback without heuristic
+	return 0, nil
+}
+
+func domainTypeSwitch(i interface{}) (value float64, err error) {
+	switch v := i.(type) {
+	case float64:
+		return v, nil
+	case int:
+		return float64(v), nil
+	case string:
+		value, err = strconv.ParseFloat(i.(string), 64)
+		if err != nil {
+			return 0, err
+		}
+		return value, nil
+	default:
+		return 0, fmt.Errorf("cannot convert '%v' to float64", i)
 	}
-	return
 }
 
 // NewGraph creates and returns a pointer to a new Graph
