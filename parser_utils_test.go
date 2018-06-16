@@ -3,8 +3,6 @@ package dot
 import (
 	"bytes"
 	"testing"
-
-	"github.com/christat/dot/graph"
 )
 
 // This file unit tests all the components of the .dot parser.
@@ -32,7 +30,7 @@ func TestStripAllComments(t *testing.T) {
 }
 
 func TestParseGraphType(t *testing.T) {
-	g := dot.NewGraph()
+	g := NewGraph()
 	fileStream := []byte("DiGrAph test {...") //tests ignore case flag in regexp
 	match, fileStream := parseGraphType(g, fileStream)
 	if !match {
@@ -46,7 +44,7 @@ func TestParseGraphType(t *testing.T) {
 }
 
 func TestParseGraphName(t *testing.T) {
-	g := dot.NewGraph()
+	g := NewGraph()
 	fileStream := []byte("9name123 {...")
 	match, fileStream := parseGraphName(g, fileStream)
 	if !match {
@@ -151,15 +149,15 @@ func TestCastAttributeValue(t *testing.T) {
 }
 
 func TestParseVertexAttributes(t *testing.T) {
-	g := dot.NewGraph()
+	g := NewGraph()
 	fileStream := []byte("[ a=3.1496, b= false, c =	foo ]")
 	match, _ := parseVertexAttributes(fileStream, g, "origin")
 	if !match {
 		t.Error("parseVertexAttributes() failed to match correct attributes section")
 	}
-	aCorrect := g.VertexAttributes["origin"]["a"] == 3.1496
-	bCorrect := g.VertexAttributes["origin"]["b"] == false
-	cCorrect := g.VertexAttributes["origin"]["c"] == "foo"
+	aCorrect := g.vertexAttributes["origin"]["a"] == 3.1496
+	bCorrect := g.vertexAttributes["origin"]["b"] == false
+	cCorrect := g.vertexAttributes["origin"]["c"] == "foo"
 	if !aCorrect || !bCorrect || !cCorrect {
 		t.Error("parseVertexAttributes() failed to set attributes section correctly")
 	}
@@ -186,23 +184,23 @@ func TestParseEdgeType(t *testing.T) {
 }
 
 func TestParseTargetVertexName(t *testing.T) {
-	g := dot.NewGraph()
+	g := NewGraph()
 	fileStream := []byte("target;")
 	match, _, targetName := parseTargetVertexName(fileStream, g, "origin", true)
 	if !match {
 		t.Error("parseTargetVertexName() failed to parse valid name 'target'")
 	}
 	found := false
-	for i := range g.AdjacencyMap["origin"] {
-		if g.AdjacencyMap["origin"][i] == targetName {
+	for i := range g.adjacencyMap["origin"] {
+		if g.adjacencyMap["origin"][i].name == targetName {
 			found = true
 			break
 		}
 	}
 
 	foundUndirected := false
-	for i := range g.AdjacencyMap[targetName] {
-		if g.AdjacencyMap[targetName][i] == "origin" {
+	for i := range g.adjacencyMap[targetName] {
+		if g.adjacencyMap[targetName][i].name == "origin" {
 			foundUndirected = true
 			break
 		}

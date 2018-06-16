@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/christat/dot/graph"
 )
 
 func printToken(str string) {
@@ -42,7 +40,7 @@ func sliceMatch(contents []byte, regexp regexp.Regexp) (match bool, src []byte, 
 	return false, contents, ""
 }
 
-func parseGraphType(g *dot.Graph, contents []byte) (match bool, src []byte) {
+func parseGraphType(g *Graph, contents []byte) (match bool, src []byte) {
 	match, contents, graphType := sliceMatch(contents, *graphTypeRe)
 	if !match {
 		fmt.Fprintln(os.Stderr, " Syntax error: GRAPH TYPE could not be parsed")
@@ -54,7 +52,7 @@ func parseGraphType(g *dot.Graph, contents []byte) (match bool, src []byte) {
 	return true, contents
 }
 
-func parseGraphName(g *dot.Graph, contents []byte) (match bool, src []byte) {
+func parseGraphName(g *Graph, contents []byte) (match bool, src []byte) {
 	match, contents, graphName := sliceMatch(contents, *graphNameRe)
 	if !match {
 		fmt.Fprint(os.Stderr, " Syntax error: GRAPH NAME could not be parsed\n")
@@ -149,10 +147,10 @@ func castAttributeValue(value string) (castedValue interface{}) {
 	return castedValue
 }
 
-func parseVertexAttributes(contents []byte, g *dot.Graph, vertexName string) (match bool, src []byte) {
+func parseVertexAttributes(contents []byte, g *Graph, vertexName string) (match bool, src []byte) {
 	match, contents, vertexAttributes := parseAttributes(contents)
 	if match {
-		g.VertexAttributes[vertexName] = vertexAttributes
+		g.vertexAttributes[vertexName] = vertexAttributes
 	}
 	return match, contents
 }
@@ -172,12 +170,12 @@ func parseEdgeType(contents []byte) (match bool, src []byte, isUndirected bool) 
 	return true, contents, isUndirected
 }
 
-func parseTargetVertexName(contents []byte, g *dot.Graph, sourceVertex string, isUndirected bool) (match bool, src []byte, targetVertex string) {
+func parseTargetVertexName(contents []byte, g *Graph, sourceVertex string, isUndirected bool) (match bool, src []byte, targetVertex string) {
 	match, contents, targetVertex = parseVertexName(contents, true, true)
 	if match {
-		g.AdjacencyMap[sourceVertex] = append(g.AdjacencyMap[sourceVertex], targetVertex)
+		g.adjacencyMap[sourceVertex] = append(g.adjacencyMap[sourceVertex], g.fetchOrCreateVertex(targetVertex))
 		if isUndirected {
-			g.AdjacencyMap[targetVertex] = append(g.AdjacencyMap[targetVertex], sourceVertex)
+			g.adjacencyMap[targetVertex] = append(g.adjacencyMap[targetVertex], g.fetchOrCreateVertex(sourceVertex))
 		}
 		return true, contents, targetVertex
 	}

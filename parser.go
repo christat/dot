@@ -4,16 +4,14 @@ package dot
 import (
 	"fmt"
 	"os"
-
-	"github.com/christat/dot/graph"
 )
 
 var verbose = false
 
 // Parse parses the fileStream, building a Graph instance or returning false otherwise.
-func Parse(fileStream []byte, verboseFlag bool) (bool, *dot.Graph) {
+func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 	verbose = verboseFlag
-	g := dot.NewGraph()
+	g := NewGraph()
 
 	fileStream = stripAllComments(fileStream)
 	match, fileStream := parseGraphType(g, fileStream)
@@ -59,6 +57,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *dot.Graph) {
 			match, fileStream, targetVertex = parseTargetVertexName(fileStream, g, sourceVertex, edgeIsUndirected)
 			if match {
 				// Inline target vertex
+				// TODO REDEFINE VERTEX CREATION/INSPECTION WHETHER EXISTENT
 				g.SetEdgeAttributes(sourceVertex, targetVertex, edgeIsUndirected, edgeAttributes)
 			} else {
 				// Nested block with multiple targets
@@ -70,7 +69,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *dot.Graph) {
 
 				printToken(" --- Beginning multiple target specification ---")
 				targetBlockEnd := false
-				targetVertices := make([]string, 10)
+				targetVertices := make([]*Vertex, 0)
 				for !targetBlockEnd {
 					// slice block end statement
 					targetBlockEnd, fileStream, _ = sliceMatch(fileStream, *blockEndRe)
@@ -80,12 +79,12 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *dot.Graph) {
 							fmt.Fprintln(os.Stderr, " Syntax error: TARGET NAME could not be parsed")
 							return false, nil
 						}
-						targetVertices = append(targetVertices, targetVertex)
+						targetVertices = append(targetVertices, NewVertex(targetVertex, g))
 						_, fileStream = parseVertexAttributes(fileStream, g, targetVertex)
 					} else {
 						// apply edgeAttributes to all target vertices
 						for _, vertex := range targetVertices {
-							g.SetEdgeAttributes(sourceVertex, vertex, edgeIsUndirected, edgeAttributes)
+							g.SetEdgeAttributes(sourceVertex, vertex.Name(), edgeIsUndirected, edgeAttributes)
 						}
 					}
 				}
@@ -105,7 +104,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *dot.Graph) {
 
 // ParseFile wraps the Parse() function with a file reader to get a fileStream ([]byte) if the file exists.
 // Returns a pointer to a Graph instance or false if reading the file or parsing failed.
-func ParseFile(filePath string, verbose bool) (bool, *dot.Graph) {
+func ParseFile(filePath string, verbose bool) (bool, *Graph) {
 	ok, fileStream := readFile(filePath)
 	if !ok {
 		fmt.Fprintf(os.Stderr, "Failed to read file %v. Parsing aborted.", filePath)

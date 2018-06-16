@@ -1,11 +1,10 @@
-package main
+package cli
 
 import (
 	"flag"
 	"fmt"
+	"github.com/christat/dot"
 	"os"
-
-	"github.com/christat/dot/parser"
 )
 
 const (
@@ -39,42 +38,42 @@ func main() {
 
 	// if attribute inspection has been selected
 	if *inspect {
-		vertices := g.AdjacencyMap
+		vertices := g.AdjacencyMap()
 
 		// loop over all vertices of the graph
 		for vertex := range vertices {
-			attributes, ok := g.VertexAttributes[vertex]
+			attributes, err := g.GetVertexAttributes(vertex)
 			fmt.Printf(" Vertex %v:\n", vertex)
-			if ok {
+			if err != nil {
+				fmt.Printf("\t<no attributes>\n\n")
+			} else {
 				for attribute := range attributes {
-					attributeValue, ok := g.VertexAttributes[vertex][attribute]
-					if !ok {
+					attributeValue, err := g.GetVertexAttribute(vertex, attribute)
+					if err == nil {
 						fmt.Fprintf(os.Stderr, "Failed to fetch vertex attribute %v", attribute)
 						os.Exit(exitError)
 					}
 					fmt.Printf("\t%v: %v\n", attribute, attributeValue)
 				}
 				fmt.Println()
-			} else {
-				fmt.Printf("\t<no attributes>\n\n")
 			}
 		}
 
 		// loop over all edges of the graph (vertex src -> vertex target)
 		for vertex := range vertices {
 			// get all immediately adjacent vertices
-			neighbors := g.AdjacencyMap[vertex]
+			neighbors := g.AdjacencyMap()[vertex]
 			if neighbors == nil {
 				fmt.Fprintf(os.Stderr, "Failed to fetch neighbors of vertex %v", vertex)
 				os.Exit(exitError)
 			}
 			for _, neighbor := range neighbors {
-				attributes, _ := g.GetEdgeAttributes(vertex, neighbor.(string))
+				attributes, _ := g.GetEdgeAttributes(vertex, neighbor.Name())
 				if len(attributes) > 0 {
 					fmt.Printf(" Edge %v -> %v:\n", vertex, neighbor)
 					if len(attributes) > 0 {
 						for attribute := range attributes {
-							value, err := g.GetEdgeAttribute(vertex, neighbor.(string), attribute)
+							value, err := g.GetEdgeAttribute(vertex, neighbor.Name(), attribute)
 							if err != nil {
 								fmt.Fprintf(os.Stderr, "Failed to fetch edge attributes %v", attribute)
 								os.Exit(exitError)

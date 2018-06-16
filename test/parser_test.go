@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/christat/dot/parser"
+	"github.com/christat/dot"
 )
 
 // TestParseFile takes example files as input to be parsed.
