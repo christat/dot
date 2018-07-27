@@ -42,8 +42,8 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 
 			_, fileStream = parseVertexAttributes(fileStream, g, sourceVertex)
 
-			var edgeIsUndirected bool
-			match, fileStream, edgeIsUndirected = parseEdgeType(fileStream)
+			var edgeIsDirectional bool
+			match, fileStream, edgeIsDirectional = parseEdgeType(fileStream)
 			if !match {
 				return false, nil
 			}
@@ -54,10 +54,10 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 
 			// target vertices can be specified either inline or in a nested block
 			var targetVertex string
-			match, fileStream, targetVertex = parseTargetVertexName(fileStream, g, sourceVertex, edgeIsUndirected)
+			match, fileStream, targetVertex = parseTargetVertexName(fileStream, g, sourceVertex, edgeIsDirectional)
 			if match {
 				// Inline target vertex
-				g.SetEdgeAttributes(sourceVertex, targetVertex, edgeIsUndirected, edgeAttributes)
+				g.SetEdgeAttributes(sourceVertex, targetVertex, edgeIsDirectional, edgeAttributes)
 			} else {
 				// Nested block with multiple targets
 				match, fileStream, _ = sliceMatch(fileStream, *blockBeginRe)
@@ -73,7 +73,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 					// slice block end statement
 					targetBlockEnd, fileStream, _ = sliceMatch(fileStream, *blockEndRe)
 					if !targetBlockEnd {
-						match, fileStream, targetVertex = parseTargetVertexName(fileStream, g, sourceVertex, edgeIsUndirected)
+						match, fileStream, targetVertex = parseTargetVertexName(fileStream, g, sourceVertex, edgeIsDirectional)
 						if !match {
 							fmt.Fprintln(os.Stderr, " Syntax error: TARGET NAME could not be parsed")
 							return false, nil
@@ -83,7 +83,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 					} else {
 						// apply edgeAttributes to all target vertices
 						for _, vertex := range targetVertices {
-							g.SetEdgeAttributes(sourceVertex, vertex.Name(), edgeIsUndirected, edgeAttributes)
+							g.SetEdgeAttributes(sourceVertex, vertex.Name(), edgeIsDirectional, edgeAttributes)
 						}
 					}
 				}

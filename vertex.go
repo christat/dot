@@ -52,7 +52,11 @@ func (v *Vertex) Cost(target search.State) float64 {
 		}
 		floatCost, ok := cost.(float64)
 		if !ok {
-			return defaultCost
+			intCost, ok := cost.(int)
+			if !ok {
+				return defaultCost
+			}
+			return float64(intCost)
 		}
 		return floatCost
 	}
@@ -72,7 +76,11 @@ func (v *Vertex) Heuristic() float64 {
 		}
 		floatHeuristic, ok := heuristic.(float64)
 		if !ok {
-			return defaultHeuristic
+			intHeuristic, ok := heuristic.(int)
+			if !ok {
+				return defaultHeuristic
+			}
+			return float64(intHeuristic)
 		}
 		return floatHeuristic
 	}

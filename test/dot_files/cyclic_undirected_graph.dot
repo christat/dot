@@ -1,0 +1,29 @@
+graph uniformCostTest {
+
+      // The graph specified is:
+      //
+      //           a
+      //          / \
+      //       7 / 1 \ 3
+      //        b --> c
+      //        | \   |
+      //      6 |  \  | 2
+      //        | 2 \ |
+      //        e <-- d
+      //          4
+      // The graph edges are bidirectional minus those explicitly marked with an arrow.
+      // Note some vertex connection definitions are missing;
+      // Those are added implicitly by the parser.
+      //
+      // Weights are set as attribute "w" in the connection params.
+
+      a -- [w = 7] b;
+      a -- [w = 3] c;
+      b -> [w = 1] c;
+      b -- [w = 6] e;
+      d -- [w = 2] {
+        c
+        e
+      };
+      e -- [w = 4] d;
+}

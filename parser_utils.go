@@ -156,26 +156,25 @@ func parseVertexAttributes(contents []byte, g *Graph, vertexName string) (match 
 	return match, contents
 }
 
-func parseEdgeType(contents []byte) (match bool, src []byte, isUndirected bool) {
-	isUndirected = false
+func parseEdgeType(contents []byte) (match bool, src []byte, isDirectional bool) {
 	match, contents, edgeType := sliceMatch(contents, *edgeTypeRe)
 	edgeType = strings.Trim(edgeType, " \t\n")
 	if !match {
 		fmt.Fprintln(os.Stderr, " Syntax error: EDGE TYPE could not be parsed")
-		return false, contents, isUndirected
+		return false, contents, isDirectional
 	}
 	printToken("EDGE TYPE " + edgeType)
-	if edgeType == "--" {
-		isUndirected = true
+	if edgeType != "--" {
+		isDirectional = true
 	}
-	return true, contents, isUndirected
+	return true, contents, isDirectional
 }
 
-func parseTargetVertexName(contents []byte, g *Graph, sourceVertex string, isUndirected bool) (match bool, src []byte, targetVertex string) {
+func parseTargetVertexName(contents []byte, g *Graph, sourceVertex string, isDirectional bool) (match bool, src []byte, targetVertex string) {
 	match, contents, targetVertex = parseVertexName(contents, g,true, true)
 	if match {
 		g.adjacencyMap[sourceVertex] = append(g.adjacencyMap[sourceVertex], g.fetchOrCreateVertex(targetVertex))
-		if isUndirected {
+		if !isDirectional {
 			g.adjacencyMap[targetVertex] = append(g.adjacencyMap[targetVertex], g.fetchOrCreateVertex(sourceVertex))
 		}
 		return true, contents, targetVertex

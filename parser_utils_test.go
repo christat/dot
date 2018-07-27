@@ -75,15 +75,16 @@ func TestParseBlockBegin(t *testing.T) {
 }
 
 func TestParseVertexName(t *testing.T) {
+	g := NewGraph()
 	fileStream := []byte(`
 		    start [ cost = 3, distance = 7 ] -> [ k = 0.12 ] a1;
 	`)
-	match, fileStream, _ := parseVertexName(fileStream, false, false)
+	match, fileStream, _ := parseVertexName(fileStream, g,false, false)
 	if !match {
 		t.Error("parseVertexName() didn't match a correct vertex name")
 	}
 	fileStream = []byte("{ this bracket shouldn't be here")
-	match, fileStream, name := parseVertexName(fileStream, true, false)
+	match, fileStream, name := parseVertexName(fileStream, g,true, false)
 	if match {
 		t.Errorf("parseVertexName() matched '%v' as a block begin bracket", string(name))
 	}
@@ -165,14 +166,14 @@ func TestParseVertexAttributes(t *testing.T) {
 
 func TestParseEdgeType(t *testing.T) {
 	fileStream := []byte("--")
-	match, _, isUndirected := parseEdgeType(fileStream)
-	if !match || !isUndirected {
+	match, _, isDirectional := parseEdgeType(fileStream)
+	if !match || isDirectional {
 		t.Error("parseEdgeType() failed to match or detect undirected edge (--)")
 	}
 
 	fileStream = []byte("->")
-	match, _, isUndirected = parseEdgeType(fileStream)
-	if !match || isUndirected {
+	match, _, isDirectional = parseEdgeType(fileStream)
+	if !match || !isDirectional {
 		t.Error("parseEdgeType() failed to match or detect directed edge (->)")
 	}
 
