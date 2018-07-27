@@ -74,7 +74,7 @@ func parseBlockBegin(contents []byte) (match bool, src []byte) {
 	return true, contents
 }
 
-func parseVertexName(contents []byte, matchOptional bool, isTarget bool) (match bool, src []byte, name string) {
+func parseVertexName(contents []byte, g *Graph, matchOptional bool, isTarget bool) (match bool, src []byte, name string) {
 	match, contents, name = sliceMatch(contents, *vertexNameRe)
 	name = strings.Trim(name, " \t\n")
 	if !match {
@@ -88,6 +88,7 @@ func parseVertexName(contents []byte, matchOptional bool, isTarget bool) (match 
 	} else {
 		printToken("VERTEX NAME " + name)
 	}
+	g.fetchOrCreateVertex(name)
 	return true, contents, name
 }
 
@@ -171,7 +172,7 @@ func parseEdgeType(contents []byte) (match bool, src []byte, isUndirected bool) 
 }
 
 func parseTargetVertexName(contents []byte, g *Graph, sourceVertex string, isUndirected bool) (match bool, src []byte, targetVertex string) {
-	match, contents, targetVertex = parseVertexName(contents, true, true)
+	match, contents, targetVertex = parseVertexName(contents, g,true, true)
 	if match {
 		g.adjacencyMap[sourceVertex] = append(g.adjacencyMap[sourceVertex], g.fetchOrCreateVertex(targetVertex))
 		if isUndirected {

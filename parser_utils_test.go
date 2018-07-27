@@ -192,7 +192,7 @@ func TestParseTargetVertexName(t *testing.T) {
 	}
 	found := false
 	for i := range g.adjacencyMap["origin"] {
-		if g.adjacencyMap["origin"][i].name == targetName {
+		if g.adjacencyMap["origin"][i].(*Vertex).name == targetName {
 			found = true
 			break
 		}
@@ -200,7 +200,7 @@ func TestParseTargetVertexName(t *testing.T) {
 
 	foundUndirected := false
 	for i := range g.adjacencyMap[targetName] {
-		if g.adjacencyMap[targetName][i].name == "origin" {
+		if g.adjacencyMap[targetName][i].(*Vertex).name == "origin" {
 			foundUndirected = true
 			break
 		}

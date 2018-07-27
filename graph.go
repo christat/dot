@@ -1,6 +1,9 @@
 package dot
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/christat/search"
+)
 
 // Graph contains the topology and attributes of a Graph, including name, type, and adjacency map and vertex/edge attributes.
 // Additionally, it is the backbone of the Vertex type, which implements the interface search.State from github.com/christat/search.
@@ -17,7 +20,7 @@ type Graph struct {
 	vertexMap map[string]*Vertex
 
 	// adjacencyMap stores the adjacent vertices of each vertex. Each entry of the map consists of a list of Vertex pointers.
-	adjacencyMap map[string][]*Vertex
+	adjacencyMap map[string][]search.State
 
 	// vertexAttributes stores for every vertex a map of attributes in the form "name": "value".
 	vertexAttributes map[string]map[string]interface{}
@@ -31,7 +34,7 @@ type Graph struct {
 func NewGraph() (g *Graph) {
 	g = new(Graph)
 	g.vertexMap = make(map[string]*Vertex)
-	g.adjacencyMap = make(map[string][]*Vertex)
+	g.adjacencyMap = make(map[string][]search.State)
 	g.vertexAttributes = make(map[string]map[string]interface{})
 	g.edgeAttributes = make(map[string]map[string]map[string]interface{})
 	return g
@@ -41,7 +44,7 @@ func NewGraph() (g *Graph) {
 func BuildGraph(
 	g *Graph,
 	vertexMap map[string]*Vertex,
-	adjacencyMap map[string][]*Vertex,
+	adjacencyMap map[string][]search.State,
 	vertexAttributes map[string]map[string]interface{},
 	edgeAttributes map[string]map[string]map[string]interface{}) {
 
@@ -52,8 +55,13 @@ func BuildGraph(
 }
 
 // AdjacencyMap returns the adjacency map of the graph.
-func (g *Graph) AdjacencyMap() map[string][]*Vertex {
+func (g *Graph) AdjacencyMap() map[string][]search.State {
 	return g.adjacencyMap
+}
+
+// VertexMap returns a map linking vertex names to their instances.
+func (g *Graph) VertexMap() map[string]*Vertex {
+	return g.vertexMap
 }
 
 // GetVertexAttributes allows obtaining the map of attributes for a given vertex.

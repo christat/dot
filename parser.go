@@ -35,7 +35,7 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 		blockEnd, fileStream, _ = sliceMatch(fileStream, *blockEndRe)
 		if !blockEnd {
 			var sourceVertex string
-			match, fileStream, sourceVertex = parseVertexName(fileStream, false, false)
+			match, fileStream, sourceVertex = parseVertexName(fileStream, g,false, false)
 			if !match {
 				return false, nil
 			}
@@ -57,7 +57,6 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 			match, fileStream, targetVertex = parseTargetVertexName(fileStream, g, sourceVertex, edgeIsUndirected)
 			if match {
 				// Inline target vertex
-				// TODO REDEFINE VERTEX CREATION/INSPECTION WHETHER EXISTENT
 				g.SetEdgeAttributes(sourceVertex, targetVertex, edgeIsUndirected, edgeAttributes)
 			} else {
 				// Nested block with multiple targets
@@ -104,10 +103,15 @@ func Parse(fileStream []byte, verboseFlag bool) (bool, *Graph) {
 
 // ParseFile wraps the Parse() function with a file reader to get a fileStream ([]byte) if the file exists.
 // Returns a pointer to a Graph instance or false if reading the file or parsing failed.
-func ParseFile(filePath string, verbose bool) (bool, *Graph) {
+func ParseFile(filePath string, verbose ...bool) (bool, *Graph) {
+	isVerbose := false
+	if verbose != nil && len(verbose) > 0 {
+		isVerbose = verbose[0]
+	}
+
 	ok, fileStream := readFile(filePath)
 	if !ok {
 		fmt.Fprintf(os.Stderr, "Failed to read file %v. Parsing aborted.", filePath)
 	}
-	return Parse(fileStream, verbose)
+	return Parse(fileStream, isVerbose)
 }

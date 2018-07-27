@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/christat/dot"
+	"github.com/christat/search"
 )
 
 func generateGraph() *dot.Graph {
@@ -22,7 +23,7 @@ func generateGraph() *dot.Graph {
 		"s": s,
 		"t": t,
 	}
-	adjacencyMap := map[string][]*dot.Vertex{
+	adjacencyMap := map[string][]search.State{
 		"s": {A, C},
 		"A": {s, t},
 		"C": {s, t},
