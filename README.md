@@ -7,18 +7,18 @@ A parsing library and graph type implementation for definitions using the [.dot 
 Includes:
 - type **Graph** to represent all the connections and attributes of the graph, along with utility functions to manipulate vertices, edges and attributes for both.
 - Two library functions:
-    -  **dot.Parse()**: parses a []byte with a .dot graph definition.
-    - **dot.ParseFile()**: a wrapper to read an input file and invoke _dot.Parse()_
+    -  `Parse()`: parses a []byte with a .dot graph definition.
+    - `ParseFile()`: a wrapper to read an input file and invoke _dot.Parse()_
 - An executable to test the parsing functionality. It takes the following arguments:
-    - **_-f [path/to/dot/file]_**
-    - **_-v_** optional, verbose mode: prints chain of tokens detected during parsing.
-    - **_-i_** optional, inspection mode: prints all connections and attributes for vertices and edges.
+    - `-f [path/to/dot/file]`
+    - `-v` optional, verbose mode: prints chain of tokens detected during parsing.
+    - `-i` optional, inspection mode: prints all connections and attributes for vertices and edges.
 
 **Note**: the parser implements a subset of the full specification, with the following limitations:
-- HTML strings (<...>) are not allowed in _IDs_.
-- Escaped quotes (\") are not allowed in _IDs_.
-- The keyword **strict** is not recognized.
-- The keyword **subgraph** is not recognized.
+- HTML strings (`<...>`) are not allowed in _IDs_.
+- Escaped quotes (`\"`) are not allowed in _IDs_.
+- The keyword `strict` is not recognized.
+- The keyword `subgraph` is not recognized.
 
 ## Download/Installation
 
