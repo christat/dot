@@ -1,6 +1,6 @@
 [![GoDoc](https://godoc.org/github.com/christat/dot?status.svg)](https://godoc.org/github.com/christat/dot)
 [![Build Status](https://travis-ci.org/christat/dot.svg?branch=master)](https://travis-ci.org/christat/dot)
-# Dot - A (minimal) dot parser and graph type
+# Dot - a (minimal) dot parser and graph type
 
 A parsing library and graph type implementation for definitions using the [.dot specification.](http://www.graphviz.org/doc/info/lang.html)
 
