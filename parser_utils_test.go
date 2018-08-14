@@ -187,26 +187,36 @@ func TestParseEdgeType(t *testing.T) {
 func TestParseTargetVertexName(t *testing.T) {
 	g := NewGraph()
 	fileStream := []byte("target;")
-	match, _, targetName := parseTargetVertexName(fileStream, g, "origin", true)
+	sourceVertex := "origin"
+	match, _, targetName := parseTargetVertexName(fileStream, g, sourceVertex, true)
+	checkTargetVertexNameAssignment(t, match, sourceVertex, targetName, g)
+	fileStream = []byte("bar;")
+	sourceVertex = "foo"
+	match, _, targetName = parseTargetVertexName(fileStream, g, sourceVertex, false)
+	checkTargetVertexNameAssignment(t, match, sourceVertex, targetName, g)
+
+}
+
+func checkTargetVertexNameAssignment(t *testing.T, match bool, sourceName, targetName string, g *Graph) {
 	if !match {
 		t.Error("parseTargetVertexName() failed to parse valid name 'target'")
 	}
 	found := false
-	for i := range g.adjacencyMap["origin"] {
-		if g.adjacencyMap["origin"][i].(*Vertex).name == targetName {
+	for _, vertex := range g.adjacencyMap[sourceName] {
+		if vertex.Name() == targetName {
 			found = true
 			break
 		}
 	}
 
 	foundUndirected := false
-	for i := range g.adjacencyMap[targetName] {
-		if g.adjacencyMap[targetName][i].(*Vertex).name == "origin" {
+	for _, vertex := range g.adjacencyMap[targetName] {
+		if vertex.Name() == sourceName {
 			foundUndirected = true
 			break
 		}
 	}
-	if !found || !foundUndirected {
+	if !found && !foundUndirected {
 		t.Error("parseTargetVertexName() failed to get stored in adjacency map")
 	}
 }
