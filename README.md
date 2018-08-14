@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/christat/dot.svg?branch=master)](https://travis-ci.org/christat/dot)
 # Dot - a (minimal) dot parser and graph type
 
-A parsing library and graph type implementation for definitions using the [.dot specification.](http://www.graphviz.org/doc/info/lang.html)
+Implements a subset of the spec from [Graphviz dot](http://www.graphviz.org/doc/info/lang.html)
 
 Includes:
 - type **Graph** to represent all the connections and attributes of the graph, along with utility functions to manipulate vertices, edges and attributes for both.
