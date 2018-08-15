@@ -5,7 +5,7 @@
 Implements a subset of the spec from [Graphviz dot](http://www.graphviz.org/doc/info/lang.html)
 
 Includes:
-- type `Graph` to represent all the connections and attributes of the graph, along with utility functions to manipulate vertices, edges and attributes for both.
+- type `Graph` to represent all the connections and attributes of the graph, along with utility functions to manipulate vertices, edges and attributes for both. It implements the [`search.HeuristicState`](https://github.com/christat/search/blob/master/state_types.go) interface.
 - Two library functions:
     -  `Parse()`: parses a []byte with a .dot graph definition.
     - `ParseFile()`: a wrapper to read an input file and invoke _dot.Parse()_
